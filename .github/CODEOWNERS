@@ -1,0 +1,7 @@
+# The engine, its workflows and the verified status are reviewed by Almma maintainers.
+# Entries need no code-owner review: the registry check decides, a maintainer merges.
+/registry/        @Lucas-almma
+/.github/         @Lucas-almma
+/status/          @Lucas-almma
+/MAINTAINERS      @Lucas-almma
+/requirements.txt @Lucas-almma

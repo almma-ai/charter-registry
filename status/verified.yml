@@ -1,0 +1,11 @@
+# Set only by Almma.AI after a review. Append-only: add a record at the end;
+# never edit or remove one. "verified" applies to the exact charter_hash
+# reviewed; a later charter change returns the entry to self-declared.
+# "revoked" withdraws an earlier verification of that hash.
+#
+# - product_slug: example
+#   charter_hash: sha256:...
+#   status: verified
+#   date: 2026-12-15
+#   by: Lucas E. Wall
+#   note: Reviewed against the charter and a call with the accountable person.

@@ -1,0 +1,12 @@
+# Copy to entries/<product_slug>/product.yml and replace every REPLACE. Everything here is published.
+# Do NOT add an email, phone or other contact details: this repository is public.
+# We reach you through the GitHub account that opens the pull request.
+product_slug: REPLACE-slug           # lowercase letters, digits, hyphens; must equal the folder name
+product_name: REPLACE Product Name
+organization: REPLACE Organization
+website: https://REPLACE.example
+accountable_person:                 # the named person who answers for this agent
+  name: REPLACE Full Name
+  role: REPLACE role
+public_key: REPLACE-with-the-line-from-census-keygen
+visibility: public                  # the only value accepted here; private work stays on your machine

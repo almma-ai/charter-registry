@@ -1,0 +1,106 @@
+{
+  "spec": "delegation-charter/0.1.2",
+  "id": "chr_REPLACE_agent",
+  "version": 1,
+  "name": "REPLACE: agent name",
+  "description": "REPLACE: one line, what the agent does.",
+  "purpose": "REPLACE: the business goal it serves, in one or two sentences.",
+  "success_measure": "REPLACE: how you will judge whether the goal is met, and when.",
+  "review_date": "2027-06-30",
+  "state": "draft",
+  "activation": {
+    "type": "approved",
+    "by": "user:REPLACE-approver",
+    "date": "2026-12-01"
+  },
+  "owner": {
+    "identity": "user:REPLACE-owner"
+  },
+  "escalation_recipient": {
+    "identity": "user:REPLACE-recipient",
+    "backup": "role:REPLACE-backup"
+  },
+  "approval_authority": {
+    "identity": "user:REPLACE-approver"
+  },
+  "scope": {
+    "will_do": [
+      "REPLACE: what the agent does, one item per task"
+    ],
+    "never_do": [
+      {
+        "item": "REPLACE: something it must never do, enforced by blocking a tool",
+        "enforcement": "enforced",
+        "tool": "REPLACE_tool_name",
+        "condition": "REPLACE: when it applies"
+      },
+      {
+        "item": "REPLACE: something it must never do, written into its instructions",
+        "enforcement": "instructed"
+      }
+    ]
+  },
+  "systems": [
+    {
+      "tool": "REPLACE_read_tool",
+      "access": "read"
+    },
+    {
+      "tool": "REPLACE_write_tool",
+      "access": "write",
+      "reversal": {
+        "owner": "user:REPLACE-owner",
+        "window_hours": 24
+      }
+    }
+  ],
+  "inputs": {
+    "required": [
+      "REPLACE: what the agent must have before it acts"
+    ],
+    "optional": []
+  },
+  "outputs": [
+    {
+      "item": "REPLACE: what it produces",
+      "recipient": "user:REPLACE-owner"
+    }
+  ],
+  "escalation_rules": [
+    {
+      "trigger": "out_of_scope",
+      "action": "hand_off",
+      "to": "escalation_recipient"
+    },
+    {
+      "trigger": "never_do_match",
+      "action": "hand_off",
+      "to": "escalation_recipient"
+    },
+    {
+      "trigger": "missing_required_input",
+      "action": "ask_requester"
+    },
+    {
+      "trigger": "irreversible_action",
+      "action": "hold_for_approval",
+      "to": "approval_authority"
+    },
+    {
+      "trigger": "action_found_wrong",
+      "action": "notify_with_record",
+      "to": [
+        "escalation_recipient",
+        "reversal_owner"
+      ]
+    }
+  ],
+  "constraints": {
+    "irreversible_actions": "require_approval",
+    "max_tool_calls_per_run": 20,
+    "max_spend_per_run": null,
+    "rate_limit_per_hour": null,
+    "background_runs": false,
+    "retention_days": 365
+  }
+}

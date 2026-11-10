@@ -1,0 +1,65 @@
+name: registry check
+# Runs on every pull request, including from forks, and comments the result.
+#
+# Security: pull_request_target runs with this repository's token, so the
+# pull request is checked out only as data (into pr/) and nothing from it is
+# executed. The code that runs is the target branch's (base/). The token is
+# given only to the steps that call the GitHub API, never to the step that
+# reads the pull request's files.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  pull-requests: write
+concurrency:
+  group: registry-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: target branch (trusted code)
+        uses: actions/checkout@v4
+        with:
+          path: base
+          persist-credentials: false
+      - name: pull request (data only)
+        uses: actions/checkout@v4
+        with:
+          path: pr
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r base/requirements.txt
+      - name: list the files this pull request changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[] | {status, filename, previous_filename}' | jq -s . > pr-files.json
+      - name: check
+        id: check
+        working-directory: base
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          set +e
+          python -m registry.cli validate --base . --head ../pr --author "$AUTHOR" --pr-files ../pr-files.json --out ../comment.md
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          [ -s ../comment.md ] || printf '## Charter Registry check\n\nThe check could not run; a maintainer will look at the log.\n' > ../comment.md
+      - name: comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file comment.md --edit-last \
+            || gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file comment.md
+      - name: result
+        if: steps.check.outputs.status != '0'
+        run: |
+          echo "::error::The registry check did not pass. See the comment on the pull request."
+          exit 1

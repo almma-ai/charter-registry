@@ -1,0 +1,4 @@
+# The Charter Score and signature checks are imported from the census, never copied.
+# Pin to the census release tag once almma-ai/agents-outrun-census 0.2.0 is merged and tagged.
+agents-outrun-census @ git+https://github.com/almma-ai/agents-outrun-census@v0.2.0
+pyyaml>=6.0
